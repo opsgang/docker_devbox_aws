@@ -1,9 +1,8 @@
 [1]: http://docs.aws.amazon.com/cli/latest/reference "use aws apis from cmd line"
 [2]: https://github.com/fugue/credstash "credstash - store and retrieve secrets in aws"
 [3]: https://github.com/opsgang/alpine_build_scripts/blob/master/install_essentials.sh "common GNU tools useful for automation"
-# docker\_devbox_aws
-_... defines an **alpine linux** container providing an env to run bash or_
-_python scripts, that need docker, awscli, credstash, curl and / or jq._
+# docker_devbox_aws
+_... alpine workspace with dev tools for aws api, credstash, docker, bash, python, git, jq, make, ssh, curl, vim ..._
 
 ## featuring ...
 
