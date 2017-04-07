@@ -1,0 +1,33 @@
+# vim: et sr sw=2 ts=2 smartindent:
+language: none
+
+branches:
+  only:
+    - master
+
+env:
+  - secure: 3yF/Z8TLKOYeNjdHNqArN5mBrlSRPewBgkQ9ksgucMUgyiOUuWJQgPn7+szasLtA9fqOXhpi2i/CTS/7Tb8bGwmK+pXnciyJ8fmOxXN8UrqVft1eXrYwqxKLt1aU8BC+0MXvz59xJ78eNsgkjwW5ajdibr4yMU42iXsMD4NC8/7UaD31fUG3FqZOTYOPLIo+e3BuDExjjtmLgbB8RMIIewZTNB/z8tN8oIUSL3n8vpe2pdg1T66J3rhcol4gWLUOsZoWl+JrASXYqzci00RXEy4P7w073soZ3eM++Em4PyImxtRd0Xr68w9+b5tG6UPOWdEYujhF3HLAs2+2LrQg3A==
+
+build:
+
+  ci:
+    - curl -O -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+      && chmod +x jq-linux64
+      && sudo mv jq-linux64 /usr/bin/jq
+    - docker pull opsgang/devbox_aws:stable || true # speed up build layers
+    - git clone https://github.com/opsgang/alpine_build_scripts --depth 1
+    - bash ./build.sh # avoid aufs file-locking with new shell
+
+  on_success:
+    - a=$(docker inspect opsgang/devbox_aws:candidate | jq -r '.[].Config.Labels')
+    - echo $a | jq . # show me the labels please
+    - v=$(echo $a | jq -r '.version')
+    - gv=$(echo $a | jq -r '."opsgang.build_git_tag"')
+    - echo "version tag is " $v
+    - docker tag opsgang/devbox_aws:candidate opsgang/devbox_aws:$v
+    - docker tag opsgang/devbox_aws:candidate opsgang/devbox_aws:$gv
+    - docker tag opsgang/devbox_aws:candidate opsgang/devbox_aws:stable
+    - docker login -p $DHP -u $DHU
+    - docker push opsgang/devbox_aws:$v
+    - docker push opsgang/devbox_aws:$gv
+    - docker push opsgang/devbox_aws:stable
