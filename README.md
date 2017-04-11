@@ -1,6 +1,8 @@
 [1]: http://docs.aws.amazon.com/cli/latest/reference "use aws apis from cmd line"
 [2]: https://github.com/fugue/credstash "credstash - store and retrieve secrets in aws"
 [3]: https://github.com/opsgang/alpine_build_scripts/blob/master/install_essentials.sh "common GNU tools useful for automation"
+[4]: https://terraform.io "Hashicorp Terraform"
+[5]: https://packer.io "Hashicorp Packer"
 # docker_devbox_aws
 _... alpine workspace with dev tools for aws api, credstash, docker, bash, python, git, jq, make, ssh, curl, vim ..._
 
@@ -14,11 +16,13 @@ _... alpine workspace with dev tools for aws api, credstash, docker, bash, pytho
 
 * bash, python, curl, git, make, jq, openssh client [and friends] [3]
 
+* scripts to install multiple versions of [terraform] [4] or [packer] [5]
+
 ## building
 
 **master branch built at shippable.com**
 
-[![Run Status](https://api.shippable.com/projects/589464f08d80360f008b754e/badge?branch=master)](https://app.shippable.com/projects/589464f08d80360f008b754e)
+[![Run Status](https://api.shippable.com/projects/58ed13f25a50220700d3c595/badge?branch=master)](https://api.shippable.com/projects/58ed13f25a50220700d3c595/badge?branch=master)
 
 ```bash
 git clone https://github.com/opsgang/docker_devbox_aws.git
@@ -34,6 +38,17 @@ docker pull opsgang/devbox_aws:stable # or use the tag you prefer
 ```
 
 ## running
+
+```bash
+# run an ephemeral workspace, mounting your .aws dir and the docker daemon from the host
+docker run -it \
+    -v ~/.aws:~/.aws \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+        opsgang/devbox_aws:stable /bin/bash
+
+# At shell in container, do what you want ... e.g. install terraform
+> terraform_versions 0.9.2
+```
 
 ```bash
 # run a custom script /path/to/script.sh that uses aws cli, curl, jq blah ...

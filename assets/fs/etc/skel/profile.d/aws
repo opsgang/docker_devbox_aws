@@ -1,0 +1,42 @@
+# vim: et sr sw=4 ts=4 smartindent syntax=sh:
+
+aws_profile_help() {
+    cat <<EOM
+usage: aws_profile [<profile>]
+... without param, lists available profiles in ~/.aws/credentials or config
+    with param, sets AWS_DEFAULT_REGION if available
+EOM
+}
+
+aws_profile() {
+    local p="$1"
+    local credentials_profiles=""
+    local config_profiles=""
+    local list=""
+    if [[ -r ~/.aws/credentials ]]; then
+        credentials_profiles=$(grep -Po '(?<=\[)\s*(?!default)[^\s\]]+' ~/.aws/credentials)
+    fi
+
+    if [[ -r ~/.aws/config ]]; then
+        config_profiles=$(grep -Po '(?<=\[profile )(?!default)[^\s\]]+' ~/.aws/config)
+    fi
+
+    list=$(echo -e "$credentials_profiles\n$config_profiles" | sed '/^$/d' | sort | uniq)
+
+    if [[ -z "$list" ]]; then
+        echo "ERROR: no profiles defined in ~/.aws/{config,credentials} files" >&2 
+        echo "(default profile is ignored)"
+        return 1
+    fi
+
+    [[ -z "$p" ]] && echo -e "Available AWS profiles:\n$list" && return 0
+
+    if ! echo "$list" | grep "^$p$" >/dev/null 2>&1 
+    then
+        echo "ERROR: profile $p not in ~/.aws/{config,credentials}" >&2
+        return 1
+    fi
+
+    echo "Using profile $p"
+    export AWS_DEFAULT_PROFILE=$p
+}

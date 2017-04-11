@@ -1,4 +1,4 @@
-# on docker build gets copied to /etc/bashrc and sourced from there.
+# Original from /etc/skel/
 #
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
