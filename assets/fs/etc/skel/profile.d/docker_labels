@@ -1,0 +1,71 @@
+function docker_labels_match_help() {
+    cat <<EOM
+usage: docker_labels_match "<docker id>" "<label name starts with >"
+... prints json { "label": "val" } for a docker image or container
+    where label name starts with str provided e.g
+
+    docker_labels_match "myapp:latest" "myapp."
+
+returns 1 if empty json array (str not matched)
+EOM
+
+}
+
+function docker_labels_match() {
+    local id="$1"
+    local label_pattern="$2"
+
+    local out=$(docker inspect $id | jq -r "$(_jq_labels_startswith $label_pattern)")
+
+    [[ "$out" == "{}" ]] && return 1
+
+    echo "$out"
+}
+
+
+function docker_label_help() {
+    cat <<EOM
+usage: docker_label "<docker id>" "<label>"
+... prints value of label for a docker image or container
+returns 1 if empty value (not found)
+EOM
+
+}
+
+function docker_label() {
+
+    local id="$1"
+    local label="$2"
+
+    local out=$(docker inspect $id | jq -r "$(_jq_labels_val $label)")
+
+    [[ -z "$out" ]] && return 1
+
+    echo $out
+}
+
+function _jq_labels_val() {
+
+    local label="$1"
+
+    cat <<EOM
+.[].Config
+| .Labels|=with_entries(select(.key == "$label"))
+    | .Labels[]
+        | @text
+EOM
+
+}
+
+function _jq_labels_startswith() {
+
+    local label_pattern="$1"
+
+    cat <<EOM
+.[].Config
+| .Labels|=with_entries(select(.key | startswith("$label_pattern")))
+    | .Labels
+EOM
+
+}
+
