@@ -12,6 +12,10 @@ EOM
 }
 
 forwardSsh() {
+
+    [[ "$1" =~ ^\-h$|\-\-help$ ]] && forwardSsh_help && return 0
+    [[ ! -z "$@" ]] && echo "... ignoring arguments $*"
+
     echo "... generating agent for ssh forwarding in cluster"
     pkill ssh-agent
     eval $(ssh-agent)
@@ -38,7 +42,8 @@ fi
 
 if [[ -d ~/profile.d ]]; then
     for f in ~/profile.d/*; do
-        . $f || echo "ERROR: ... could not source $f"
+        [[ -f $f ]] && echo "... sourcing $f" && . $f
+        [[ $? -ne 0 ]] && echo "ERROR: ... could not source $f"
     done
 fi
 

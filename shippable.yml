@@ -15,7 +15,7 @@ build:
       && chmod +x jq-linux64
       && sudo mv jq-linux64 /usr/bin/jq
     - docker pull opsgang/devbox_aws:stable || true # speed up build layers
-    - git clone https://github.com/opsgang/alpine_build_scripts --depth 1
+    - ( cd assets && git clone https://github.com/opsgang/alpine_build_scripts --depth 1 )
     - bash ./build.sh # avoid aufs file-locking with new shell
 
   on_success:

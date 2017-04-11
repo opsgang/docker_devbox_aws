@@ -1,5 +1,5 @@
 # vim: et sr sw=4 ts=4 smartindent syntax=dockerfile:
-FROM gliderlabs/alpine:3.4
+FROM opsgang/aws_env:stable
 
 MAINTAINER jinal--shah <jnshah@gmail.com>
 LABEL \
@@ -13,7 +13,6 @@ LABEL \
 - cmds to manage terraform, packer versions \
 "
 
-COPY alpine_build_scripts /alpine_build_scripts
 COPY assets /assets
 
 RUN sh /assets/build.sh

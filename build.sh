@@ -117,10 +117,7 @@ labels() {
 
     cat<<EOM
     --label version=$(date +'%Y%m%d%H%M%S')
-    --label opsgang.awscli_version=$av
-    --label opsgang.credstash_version=$cv
     --label opsgang.docker_version=$dv
-    --label opsgang.jq_version=$jv
     --label opsgang.build_git_uri=$gu
     --label opsgang.build_git_sha=$gs
     --label opsgang.build_git_branch=$gb
