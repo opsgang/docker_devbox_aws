@@ -8,21 +8,21 @@ _... alpine workspace with dev tools for aws api, credstash, docker, bash, pytho
 
 ## featuring ...
 
-* [aws cli] [1]
+* [aws cli][1]
 
-* [credstash] [2] (for managing secrets in aws)
+* [credstash][2] (for managing secrets in aws)
 
 * docker engine
 
-* bash, python, curl, git, make, jq, openssh client [and friends] [3]
+* bash, python, curl, git, make, jq, openssh client [and friends][3]
 
-* scripts to install multiple versions of [terraform] [4] or [packer] [5]
+* scripts to install multiple versions of [terraform][4] or [packer][5]
 
 ## building
 
 **master branch built at shippable.com**
 
-[![Run Status](https://api.shippable.com/projects/58ed13f25a50220700d3c595/badge?branch=master)](https://api.shippable.com/projects/58ed13f25a50220700d3c595/badge?branch=master)
+[![Run Status](https://api.shippable.com/projects/58ed13f25a50220700d3c595/badge?branch=master)](https://api.shippable.com/projects/58ed13f25a50220700d3c595)
 
 ```bash
 git clone https://github.com/opsgang/docker_devbox_aws.git
@@ -41,8 +41,8 @@ docker pull opsgang/devbox_aws:stable # or use the tag you prefer
 
 ```bash
 # run an ephemeral workspace, mounting your .aws dir and the docker daemon from the host
-docker run -it \
-    -v ~/.aws:~/.aws \
+docker run -it --user root
+    -v $HOME/.aws:/root/.aws \
     -v /var/run/docker.sock:/var/run/docker.sock \
         opsgang/devbox_aws:stable /bin/bash
 
