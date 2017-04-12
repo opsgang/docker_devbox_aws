@@ -1,0 +1,8 @@
+# If /etc/skel/.ssh exists AND current user does not have
+# a .ssh dir in their home, copy this dir
+#
+# As this runs in a single user's workspace do we care
+# that all virtual users share these keys?
+skel=/etc/skel/.ssh
+[[ -d $skel ]] && [[ ! -d ~/.ssh ]] && [[ -d $skel ]] && cp -r $skel ~/
+unset skel
