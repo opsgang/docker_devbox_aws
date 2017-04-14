@@ -14,9 +14,15 @@ _... alpine workspace with dev tools for aws api, credstash, docker, bash, pytho
 
 * docker engine
 
-* bash, python, curl, git, make, jq, openssh client [and friends][3]
+* bash, python, vim, curl, git, make, jq, openssh client [and friends][3]
 
 * scripts to install multiple versions of [terraform][4] or [packer][5]
+
+## labels
+
+The docker image contains audit info (use _docker inspect_ to see) including version info about
+key tools e.g. docker, jq, awscli, as well as git build info.
+
 
 ## building
 
@@ -42,7 +48,9 @@ docker pull opsgang/devbox_aws:stable # or use the tag you prefer
 ```bash
 # run an ephemeral workspace, mounting your .aws dir and the docker daemon from the host
 docker run -it --user root
-    -v $HOME/.aws:/root/.aws \
+    -v $HOME/.aws:/etc/skel/.aws \
+    -v $HOME/.ssh:/etc/skel/.ssh \
+    -v $HOME/.gitconfig:/etc/skel/.gitconfig \
     -v /var/run/docker.sock:/var/run/docker.sock \
         opsgang/devbox_aws:stable /bin/bash
 
