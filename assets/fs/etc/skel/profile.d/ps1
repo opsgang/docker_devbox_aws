@@ -1,0 +1,43 @@
+# vim: et sr sw=4 ts=4 smartindent syntax=sh:
+_set_prompt() {
+    local h="$1"
+    if [[ $- == *i* ]]; then
+        local term_reset='\[\033[0m\]'
+        local bold_star="\\[\\033[1m\\]*${term_reset}"
+        local ps1_prefix=''
+        local user="\\[\\033[01;32m\\]\\u${term_reset}"
+        local host="\\[\\033[01;32m\\]\\h${term_reset}"
+        local pwd="\\[\\033[01;36m\\]\\W/${term_reset}"
+        user_host="${bold_star}${user}@${host}${bold_star}"
+        PS1="$user_host \\t $pwd \$(parse_git_branch 2>/dev/null) \\$ "
+    fi
+}
+
+# get current branch in git repo
+parse_git_branch() {
+	local b=$(git symbolic-ref --short HEAD 2>/dev/null)
+    # if pwd is a git branch, print name and any change types
+	[[ ! -z "${b}" ]] && echo "[git:${b}$(parse_git_dirty)]"
+}
+
+# get current status of git repo
+parse_git_dirty() {
+	local s=$(git status 2>&1 | tee)
+	local bits=''
+	[ $(_git_change_type "$s" "renamed:") == "0" ] && bits=">${bits}"                # RENAMED   >
+	[ $(_git_change_type "$s" "Your branch is ahead of") == "0" ] && bits="*${bits}" # AHEAD     *
+	[ $(_git_change_type "$s" "new file:") == "0" ] && bits="+${bits}"               # NEW FILES +
+	[ $(_git_change_type "$s" "Untracked files") == "0" ] && bits="?${bits}"         # UNTRACKED ?
+	[ $(_git_change_type "$s" "deleted:") == "0" ] && bits="x${bits}"                # DELETED   x
+	[ $(_git_change_type "$s" "modified:") == "0" ] && bits="!${bits}"               # MODIFIED  !
+
+    [[ ! -z "$bits" ]] && echo " $bits"
+}
+
+_git_change_type() {
+    local s="$1" # git status
+    local p="$2" # pattern to match
+    echo -n "$s" 2> /dev/null | grep "$p" &> /dev/null; echo "$?"
+}
+
+_set_prompt
