@@ -22,14 +22,14 @@ parse_git_branch() {
 
 # get current status of git repo
 parse_git_dirty() {
+	local ct='' # change types (symbols denoting type of git changes)
 	local s=$(git status 2>&1 | tee)
-	local bits=''
-	[ $(_git_change_type "$s" "renamed:") == "0" ] && bits=">${bits}"                # RENAMED   >
-	[ $(_git_change_type "$s" "Your branch is ahead of") == "0" ] && bits="*${bits}" # AHEAD     *
-	[ $(_git_change_type "$s" "new file:") == "0" ] && bits="+${bits}"               # NEW FILES +
-	[ $(_git_change_type "$s" "Untracked files") == "0" ] && bits="?${bits}"         # UNTRACKED ?
-	[ $(_git_change_type "$s" "deleted:") == "0" ] && bits="x${bits}"                # DELETED   x
-	[ $(_git_change_type "$s" "modified:") == "0" ] && bits="!${bits}"               # MODIFIED  !
+	[ $(_git_change_type "$s" "renamed:") == "0" ] && ct=">${ct}"                # RENAMED   >
+	[ $(_git_change_type "$s" "Your branch is ahead of") == "0" ] && ct="*${ct}" # AHEAD     *
+	[ $(_git_change_type "$s" "new file:") == "0" ] && ct="+${ct}"               # NEW FILES +
+	[ $(_git_change_type "$s" "Untracked files") == "0" ] && ct="?${ct}"         # UNTRACKED ?
+	[ $(_git_change_type "$s" "deleted:") == "0" ] && ct="x${ct}"                # DELETED   x
+	[ $(_git_change_type "$s" "modified:") == "0" ] && ct="!${ct}"               # MODIFIED  !
 
     [[ ! -z "$bits" ]] && echo " $bits"
 }
@@ -40,6 +40,6 @@ _git_change_type() {
     echo -n "$s" 2> /dev/null | grep "$p" &> /dev/null; echo "$?"
 }
 
-_set_prompt
+[[ $- == *i* ]] && _set_prompt
 
 unset _set_prompt

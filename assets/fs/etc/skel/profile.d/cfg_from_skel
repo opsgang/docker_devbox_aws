@@ -22,7 +22,7 @@ _do() {
     for f in $files; do
         skel=/etc/skel/$f
         if [[ ! -e $h/$f ]] && [[ -e $skel ]]; then
-            echo "INFO: ... seeding $h from $skel"
+            [[ $- == *i* ]] && echo "... seeding $h from $skel"
             su-exec root cp -a $skel $h/
             chown -R $uid:$gid $h/$f
         fi
