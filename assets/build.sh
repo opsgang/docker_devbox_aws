@@ -15,8 +15,11 @@ done
 echo "INFO: ... adding user skel files to homedir"
 cp -a /etc/skel/. ~/
 
-echo "INFO: ... installing docker engine"
-apk --no-cache add --update docker || exit 1
+echo "INFO: ... installing docker engine and su-exec"
+apk --no-cache add --update docker su-exec || exit 1
+
+echo "WARNING: setuid on su-exec lets any container user run as superuser"
+chmod u+s /sbin/su-exec
 
 rm -rf ${_A} 2>/dev/null
 

@@ -27,18 +27,8 @@ forwardSsh() {
 }
 
 for script in /etc/profile.d/*.sh ; do
-    if [ -r $script ] ; then
-        . $script
-    fi
+    [[ -r $script ]] && . $script
 done
-
-if [[ -r /etc/profile.d/bash_prompt.sh ]]; then
-    . /etc/profile.d/bash_prompt.sh
-elif [[ -r /etc/profile.d/color_prompt ]]; then
-    . /etc/profile.d/color_prompt
-else
-    export PS1='\[\033[01;32m\]\h\[\033[01;36m\]\W$ \[\033[00m\]'
-fi
 
 if [[ -d ~/profile.d ]]; then
     for f in ~/profile.d/*; do

@@ -7,7 +7,7 @@ _set_prompt() {
         local ps1_prefix=''
         local user="\\[\\033[01;32m\\]\\u${term_reset}"
         local host="\\[\\033[01;32m\\]\\h${term_reset}"
-        local pwd="\\[\\033[01;36m\\]\\W/${term_reset}"
+        local pwd="\\[\\033[01;36m\\]\\W${term_reset}"
         user_host="${bold_star}${user}@${host}${bold_star}"
         PS1="$user_host \\t $pwd \$(parse_git_branch 2>/dev/null) \\$ "
     fi
@@ -41,3 +41,5 @@ _git_change_type() {
 }
 
 _set_prompt
+
+unset _set_prompt

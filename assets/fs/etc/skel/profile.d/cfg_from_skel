@@ -1,0 +1,32 @@
+# vim: et sr sw=4 ts=4 smartindent syntax=sh:
+#
+# Allows us to mount certain user homedir cfg in to /etc/skel
+# when we run the container, and have them automatically
+# copied over to the user's dir.
+#
+# e.g.
+# If /etc/skel/.ssh exists AND current user does not have
+# a .ssh dir in their home, copy this dir
+#
+# As this script runs in a 'workspace' container for a single user
+# do we care that all virtual users within that container
+# share these keys? (Well, I don't at least).
+#
+do() {
+    local files=".gitconfig .aws .ssh"
+    local h=$HOME
+    local uid=$(id -u)
+    local gid=$(id -g)
+    local f=""
+
+    for f in $files; do
+        skel=/etc/skel/$f
+        if [[ ! -e $h/$f ]] && [[ -e $skel ]]; then
+            echo "INFO: ... seeding $h from $skel
+            su-exec root cp -a $skel $h/
+            chown -R $uid:$gid $h/$f
+        fi
+    done
+}
+do
+unset do
