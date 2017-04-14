@@ -12,7 +12,7 @@
 # do we care that all virtual users within that container
 # share these keys? (Well, I don't at least).
 #
-do() {
+_do() {
     local files=".gitconfig .aws .ssh"
     local h=$HOME
     local uid=$(id -u)
@@ -22,11 +22,11 @@ do() {
     for f in $files; do
         skel=/etc/skel/$f
         if [[ ! -e $h/$f ]] && [[ -e $skel ]]; then
-            echo "INFO: ... seeding $h from $skel
+            echo "INFO: ... seeding $h from $skel"
             su-exec root cp -a $skel $h/
             chown -R $uid:$gid $h/$f
         fi
     done
 }
-do
-unset do
+_do
+unset _do
