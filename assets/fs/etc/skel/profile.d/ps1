@@ -31,7 +31,7 @@ parse_git_dirty() {
 	[ $(_git_change_type "$s" "deleted:") == "0" ] && ct="x${ct}"                # DELETED   x
 	[ $(_git_change_type "$s" "modified:") == "0" ] && ct="!${ct}"               # MODIFIED  !
 
-    [[ ! -z "$bits" ]] && echo " $bits"
+    [[ ! -z "$ct" ]] && echo " $ct"
 }
 
 _git_change_type() {
