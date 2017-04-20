@@ -1,5 +1,36 @@
 # vim: et sr sw=4 ts=4 smartindent syntax=sh:
 
+aws_mfa_session_help() {
+    cat <<EOM
+usage: aws_mfa_session
+... gives user authenticated session with an mfa-protected aws account
+Note: requires profiles to be set up in .aws/{config,credentials}
+EOM
+}
+
+aws_mfa_session() {
+    echo "Enter MFA serial e.g. arn:aws:iam::<account id>:mfa/<user-name>"
+    read serial
+
+    echo "Enter name of mfa-protected profile"
+    read profile
+
+    echo "Enter MFA for your admin user in eil-digital-master account: "
+    read token_code
+
+    CREDS=$(
+        aws --profile $profile sts get-session-token \
+            --duration-seconds 3600 \
+            --serial-number $serial \
+            --token-code $token_code
+    ) || return 1
+
+    unset AWS_DEFAULT_PROFILE
+    export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .Credentials.SecretAccessKey)
+    export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r .Credentials.AccessKeyId)
+    export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .Credentials.SessionToken)
+}
+
 aws_profile_help() {
     cat <<EOM
 usage: aws_profile [<profile>] [--export]
