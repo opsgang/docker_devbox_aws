@@ -4,26 +4,42 @@ aws_mfa_session_help() {
     cat <<EOM
 usage: aws_mfa_session
 ... gives user authenticated session with an mfa-protected aws account
-Note: requires profiles to be set up in .aws/{config,credentials}
+Note: profile must exist in .aws/config or .aws/credentials.
 EOM
 }
 
 aws_mfa_session() {
-    echo "Enter MFA serial e.g. arn:aws:iam::<account id>:mfa/<user-name>"
-    read serial
 
-    echo "Enter name of mfa-protected profile"
-    read profile
+    if [[ -z "${MFA_SERIAL}" ]]; then
+        echo "Enter MFA serial e.g. arn:aws:iam::<account id>:mfa/<user-name>"
+        echo "... or set MFA_SERIAL in your env, before calling aws_mfa_session:"
+        read MFA_SERIAL
+    else
+        echo "Using serial $MFA_SERIAL"
+    fi
 
-    echo "Enter MFA for your admin user in eil-digital-master account: "
+    if [[ -z "${MFA_PROFILE}" ]]; then
+        echo "Enter MFA protected profile name (must exist in your .aws creds)"
+        echo "... or set MFA_PROFILE in your env, before calling aws_mfa_session:"
+        read MFA_PROFILE
+    else
+        echo "Using profile $MFA_PROFILE"
+    fi
+
+    echo "Enter MFA code:"
     read token_code
 
     CREDS=$(
-        aws --profile $profile sts get-session-token \
-            --duration-seconds 3600 \
-            --serial-number $serial \
+        aws --profile $MFA_PROFILE sts get-session-token \
+            --duration-seconds 3600     \
+            --serial-number $MFA_SERIAL \
             --token-code $token_code
-    ) || return 1
+    )
+
+    if [[ $? -ne 0 ]]; then
+        echo "ERROR: ... could not get session creds." >&2
+        return 1
+    fi
 
     unset AWS_DEFAULT_PROFILE
     export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .Credentials.SecretAccessKey)
