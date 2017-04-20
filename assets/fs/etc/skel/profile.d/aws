@@ -2,14 +2,16 @@
 
 aws_profile_help() {
     cat <<EOM
-usage: aws_profile [<profile>]
-... without param, lists available profiles in ~/.aws/credentials or config
-    with param, sets AWS_DEFAULT_REGION if available
+usage: aws_profile [<profile>] [--export]
+... without params, lists available profiles in ~/.aws/credentials or config
+    <profile>: sets AWS_DEFAULT_PROFILE if found in creds
+    --export: export AWS region or key vars in to env
 EOM
 }
 
 aws_profile() {
     local p="$1"
+    local x="$2"
     local credentials_profiles=""
     local config_profiles=""
     local list=""
@@ -38,5 +40,29 @@ aws_profile() {
     fi
 
     echo "Using profile $p"
+    unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
     export AWS_DEFAULT_PROFILE=$p
+    [[ ! -z "$x" ]] && _aws_profile_export "$p"
+}
+
+_aws_profile_export() {
+    echo "... export region and/or keys for $p"
+    local p="$1" # profile name
+    [[ -z "$p" ]] && echo "ERROR ... no profile specified! " && return 1
+    local rx="^(region|aws_(access_key_id|secret_access_key))="
+
+    local vars=$(
+        cat ~/.aws/{credentials,config}                \
+        | sed -n "/\[\(profile \)*$p/,/^\(\[.*\|\)$/p" \
+        | grep -P "$rx"                                \
+        | sort | uniq
+    )
+
+    [[ "$vars" =~ ^\ *$ ]] && echo "ERROR ... profile $p not found" && return 1
+
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+        IFS== read -r k v <<<$(echo $line);
+        [[ "$k" == "region" ]] && k=aws_default_region # hacked to fit recognised exported var
+        export ${k^^}=$v
+    done < <(echo "$vars")
 }
