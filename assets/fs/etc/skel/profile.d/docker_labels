@@ -41,7 +41,7 @@ function docker_label() {
 
     [[ -z "$out" ]] && return 1
 
-    echo $out
+    echo -e "$out"
 }
 
 function _jq_labels_val() {
