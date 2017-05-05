@@ -88,8 +88,8 @@ forwardSsh() {
 
 sourceCompletions() {
     local c=""
-    for c in bash_completion git docker; do
-        . /usr/share/bash-completion/$c
+    for c in bash_completion git docker make; do
+        . /usr/share/bash-completion/completions/$c
     done
 }
 
