@@ -86,6 +86,13 @@ forwardSsh() {
     ssh-add -l # verify your key has been added to the key-ring
 }
 
+sourceCompletions() {
+    local c=""
+    for c in bash_completion git docker; do
+        . /usr/share/bash-completion/$c
+    done
+}
+
 for script in /etc/profile.d/*.sh ; do
     [[ -r $script ]] && . $script
 done
@@ -102,4 +109,5 @@ alias gtree='tree -a -C -I .git'
 if [[ $- == *i* ]]; then
     _print_helpers
     forwardSsh
+    sourceCompletions
 fi

@@ -2,6 +2,11 @@
 _A=/assets
 _B=/usr/local/bin
 _S=/assets/alpine_build_scripts
+_C="
+    bash-completion
+    git-bash-completion
+    docker-bash-completion
+"
 
 echo "INFO ... creating skel bashrc"
 cp -a ${_A}/fs/* /
@@ -17,6 +22,9 @@ cp -a /etc/skel/. ~/
 
 echo "INFO: ... installing docker engine and su-exec"
 apk --no-cache add --update docker su-exec || exit 1
+
+echo "INFO: ... adding " ${_C}
+apk --no-cache add --update ${_C} || exit 1
 
 echo "WARNING: setuid on su-exec lets any container user run as superuser"
 chmod u+s /sbin/su-exec
