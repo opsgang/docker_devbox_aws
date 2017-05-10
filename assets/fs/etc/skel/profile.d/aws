@@ -31,7 +31,7 @@ aws_mfa_session() {
 
     CREDS=$(
         aws --profile $MFA_PROFILE sts get-session-token \
-            --duration-seconds 3600     \
+            --duration-seconds 86400    \
             --serial-number $MFA_SERIAL \
             --token-code $token_code
     )
@@ -89,7 +89,9 @@ aws_profile() {
     echo "Using profile $p"
     unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
     export AWS_DEFAULT_PROFILE=$p
-    [[ ! -z "$x" ]] && _aws_profile_export "$p"
+    [[ ! -z "$x" ]] && ! _aws_profile_export "$p" && return 1
+
+    return 0
 }
 
 _aws_profile_export() {
