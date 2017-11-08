@@ -8,7 +8,7 @@ branches:
 env:
   global:
     - IMG="devbox_aws"
-    - STABLE_TAG="alpine-3.6"
+    - STABLE_TAG="stable"
     - SR="https://github.com/opsgang/alpine_build_scripts"
     - JQ="https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64"
 
