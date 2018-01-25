@@ -20,8 +20,8 @@ done
 echo "INFO: ... adding user skel files to homedir"
 cp -a /etc/skel/. ~/
 
-echo "INFO: ... installing docker engine and su-exec"
-apk --no-cache add --update docker su-exec || exit 1
+echo "INFO: ... installing docker engine, su-exec, gpg"
+apk --no-cache add --update docker su-exec gnupg || exit 1
 
 echo "INFO: ... adding " ${_C}
 apk --no-cache add --update ${_C} || exit 1
