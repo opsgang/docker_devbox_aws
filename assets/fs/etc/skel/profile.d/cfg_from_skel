@@ -13,7 +13,7 @@
 # share these keys? (Well, I don't at least).
 #
 _do() {
-    local files=".gitconfig .aws .ssh"
+    local files=".gitconfig .aws .ssh .gnupg"
     local h=$HOME
     local uid=$(id -u)
     local gid=$(id -g)
