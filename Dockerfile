@@ -1,7 +1,6 @@
 # vim: et sr sw=4 ts=4 smartindent syntax=dockerfile:
 FROM opsgang/aws_env:stable
 
-MAINTAINER jinal--shah <jnshah@gmail.com>
 LABEL \
       name="opsgang/devbox_aws" \
       vendor="sortuniq" \
