@@ -4,7 +4,6 @@ language: none
 branches:
   only:
     - master
-    - alpine-3.7
 
 env:
   global:
@@ -43,7 +42,6 @@ integrations:
       branches:
         only:
           - master
-          - alpine-3.7
 
   notifications:
     - integrationName: opsgang_slack_delivery

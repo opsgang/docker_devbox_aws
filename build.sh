@@ -130,6 +130,11 @@ docker_build(){
 
     valid_docker_version || return 1
 
+    if [[ ! -d "assets/alpine_build_scripts" ]]; then
+        echo "ERROR: clone (or fetch) assets/alpine_build_scripts first"
+        return 1
+    fi
+
     labels=$(labels) || return 1
     n=$(img_name) || return 1
 
