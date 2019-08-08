@@ -10,7 +10,7 @@ env:
     - IMG="devbox_aws"
     - STABLE_TAG="stable"
     - SR="https://github.com/opsgang/alpine_build_scripts"
-    - JQ="https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64"
+    - JQ="https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64"
 
 build:
 
@@ -37,8 +37,8 @@ build:
 
 integrations:
   hub:
-    - integrationName: opsgang_dockerhub
-      type: docker
+    - integrationName: opsgang_dockerhubreg
+      type: dockerRegistryLogin
       branches:
         only:
           - master

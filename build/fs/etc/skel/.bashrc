@@ -1,6 +1,6 @@
 # Original from /etc/skel/
 #
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PATH=/usr/local/terraform/bin:/usr/local/packer/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 _print_helpers() {
 

@@ -42,13 +42,13 @@ _pypi_pkg_version() {
     | tail -1 || return 1
 }
 
-alpine_img(){
+base_img(){
     grep -Po '(?<=^FROM ).*' Dockerfile
 }
 
 init_apk_versions() {
     local img="$1"
-    docker pull $img >/dev/null 2>&1 || return 1
+    docker pull $img >/dev/null 2>&1 || echo >&2 "WARNING: could not pull $img"
 }
 
 apk_pkg_version() {
@@ -102,38 +102,32 @@ img_name(){
 }
 
 labels() {
-    ai=$(alpine_img) || return 1
-    init_apk_versions $ai || return 1
+    bi=$(base_img) || return 1
+    init_apk_versions $bi
 
-    av=$(awscli_version) || return 1
-    cv=$(credstash_version) || return 1
-    jv=$(apk_pkg_version $ai 'jq') || return 1
-    dv=$(apk_pkg_version $ai 'docker') || return 1
+    dv=$(apk_pkg_version $bi 'docker') || return 1
     gu=$(git_uri) || return 1
     gs=$(git_sha) || return 1
     gb=$(git_branch) || return 1
     gt=$(git describe 2>/dev/null || echo "no-git-tag")
     bb=$(built_by) || return 1
 
+    ts=$(date +'%Y%m%d%H%M%S')
     cat<<EOM
-    --label version=$(date +'%Y%m%d%H%M%S')
-    --label opsgang.docker_version=$dv
-    --label opsgang.build_git_uri=$gu
-    --label opsgang.build_git_sha=$gs
-    --label opsgang.build_git_branch=$gb
-    --label opsgang.build_git_tag=$gt
-    --label opsgang.built_by="$bb"
+    --label version=$ts
+    --label opsgang.devbox_aws.version=$ts
+    --label opsgang.devbox_aws.docker_version=$dv
+    --label opsgang.devbox_aws.build_git_uri=$gu
+    --label opsgang.devbox_aws.build_git_sha=$gs
+    --label opsgang.devbox_aws.build_git_branch=$gb
+    --label opsgang.devbox_aws.build_git_tag=$gt
+    --label opsgang.devbox_aws.built_by="$bb"
 EOM
 }
 
 docker_build(){
 
     valid_docker_version || return 1
-
-    if [[ ! -d "assets/alpine_build_scripts" ]]; then
-        echo "ERROR: clone (or fetch) assets/alpine_build_scripts first"
-        return 1
-    fi
 
     labels=$(labels) || return 1
     n=$(img_name) || return 1
