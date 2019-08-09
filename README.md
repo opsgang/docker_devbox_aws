@@ -1,22 +1,23 @@
-[1]: http://docs.aws.amazon.com/cli/latest/reference "use aws apis from cmd line"
-[2]: https://github.com/fugue/credstash "credstash - store and retrieve secrets in aws"
-[3]: https://github.com/opsgang/alpine_build_scripts/blob/master/install_essentials.sh "common GNU tools useful for automation"
-[4]: https://terraform.io "Hashicorp Terraform"
-[5]: https://packer.io "Hashicorp Packer"
-# docker_devbox_aws
-_... alpine workspace with dev tools for aws api, credstash, docker, bash, python, git, jq, make, ssh, curl, vim ..._
+[1]: https://github.com/opsgang/docker_aws_env "opsgang/aws_env"
+[2]: https://terraform.io "Hashicorp Terraform"
+[3]: https://packer.io "Hashicorp Packer"
+# docker\_devbox\_aws
+> 
+> [aws\_env][1] with additional tools for
+> running docker from the host, bash completions
+> using personal aws creds, ssh keys and gnupg.
+>
+> Plus vim.
 
 ## featuring ...
 
-* [aws cli][1]
+* the [opsgang/aws\_env tools][1]
 
-* [credstash][2] (for managing secrets in aws)
+* docker cli (useful if you mount the docker.sock from the host)
 
-* docker engine
+* commands to manage multiple versions of [terraform][2] or [packer][3]
 
-* bash, python, vim, curl, git, make, jq, openssh client [and friends][3]
-
-* scripts to install multiple versions of [terraform][4] or [packer][5]
+* su-exec
 
 ## labels
 
@@ -25,17 +26,33 @@ key tools e.g. docker, jq, awscli, as well as git build info.
 
 ## skel dirs
 
-The following assets if mounted under /etc/skel will be copied to your container user's home dir as well
-when you invoke /bin/bash as a login shell:
+The following assets if mounted in the container under /etc/skel will be copied
+to your container user's home dir as well when you invoke /bin/bash as a login shell:
 
-* .aws dir
+* .aws/      e.g. `-v $HOME/.aws:/etc/skel/.aws`
 
-* .ssh dir
+* .ssh/      e.g. `-v $HOME/.ssh:/etc/skel/.ssh`
 
-* .gitconfig file
+* .gnupg/    e.g. `-v $HOME/.gnupg:/etc/skel/.gnupg`
 
-If you create a new user in the container from this image (or a derived FROM image) the new user will
-also get these copied over to their home.
+* .gitconfig e.g. `-v $HOME/.gitconfig:/etc/skel/.gitconfig`
+
+## ENTRYPOINT
+
+/docker-entrypoint.sh script in container.
+
+If you are using `docker run`'s `--user` option, this creates you a 'real' OS user
+and home dir seeded from /etc/skel, with the provided uid.
+
+**We do nothing special with any gid passed via the --user option**
+
+It also ensures that things like docker are usable by your non-root user.
+
+## CONFIG WHEN USING docker --user
+
+*DEVBOX_USER*: name for your user's uid in the container
+
+*DEVBOX_HOME*: path in container for your user's home dir
 
 ## building
 
@@ -46,7 +63,6 @@ also get these copied over to their home.
 ```bash
 git clone https://github.com/opsgang/docker_devbox_aws.git
 cd docker_devbox_aws
-git clone https://github.com/opsgang/alpine_build_scripts
 ./build.sh # adds custom labels to image
 ```
 

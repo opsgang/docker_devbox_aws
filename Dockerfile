@@ -17,6 +17,7 @@ COPY build /build/
 RUN sh /build/install_vim.sh
 RUN /build/build_in_container.sh
 
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/bin/bash"]
 
 # built with additional labels:
